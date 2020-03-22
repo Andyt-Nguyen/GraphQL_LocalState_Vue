@@ -1,5 +1,17 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <h1>Apollo Methods</h1>
+    <ApolloMethods />
   </div>
 </template>
+
+<script>
+import ApolloMethods from "../components/ApolloMethods";
+
+export default {
+  name: "About",
+  components: {
+    ApolloMethods
+  }
+};
+</script>
