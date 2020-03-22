@@ -11,6 +11,12 @@
       <div class="box" :key="todo.id" v-for="todo in todos">
         <h3>{{ todo.title }}</h3>
         <button @click="deleteTodo(todo.id)">Delete</button>
+        <button v-if="!isEdit" @click="isEdit=true">Edit</button>
+
+        <div v-if="isEdit">
+          <input type="text" v-model="updateText" />
+          <button @click="updateTodo(todo.id)">Submit</button>
+        </div>
       </div>
     </div>
   </div>
@@ -20,12 +26,15 @@
 import GetTodos from "../graphql/GetTodos";
 import AddTodo from "../graphql/AddTodo";
 import DeleteTodo from "../graphql/DeleteTodo";
+import UpdateTodo from "../graphql/UpdateTodo";
 
 export default {
   name: "ApolloMethods",
   data: () => ({
     title: "",
-    todos: [] // This data property will be over written by the apollo object
+    todos: [], // This data property will be over written by the apollo object
+    isEdit: false,
+    updateText: ""
   }),
 
   apollo: {
@@ -48,6 +57,20 @@ export default {
           id
         }
       });
+    },
+
+    async updateTodo(id) {
+      await this.$apollo.mutate({
+        mutation: UpdateTodo,
+        variables: {
+          id,
+          title: this.updateText,
+          completed: false
+        }
+      });
+
+      this.updateText = "";
+      this.isEdit = false;
     }
   }
 };

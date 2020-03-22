@@ -36,6 +36,20 @@ const localState = {
 							todos: filteredTodos
 						}
 					});
+				},
+
+				updateTodo(_, todoUpdate, { cache }) {
+					const { todos } = cache.readQuery({ query: GetTodos });
+					const updatedTodos = todos.map((todo) =>
+						todo.id === todoUpdate.id
+							? { ...todoUpdate, __typename: 'Todo' }
+							: todo
+					);
+					cache.writeData({
+						data: {
+							todos: updatedTodos
+						}
+					});
 				}
 			}
 		}

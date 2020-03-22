@@ -36,6 +36,27 @@
                     <span v-else-if="errorDel">Loading</span>
                     <span v-else>Delete</span>
                   </button>
+
+                  <button v-if="!isEdit" @click="isEdit=true">Edit</button>
+                </template>
+              </ApolloMutation>
+              <ApolloMutation
+                v-if="isEdit"
+                :mutation="require('../graphql/UpdateTodo.js').default"
+                :variables="{
+                  id: todo.id,
+                  title: updateTitle,
+                  completed: false
+                }"
+                @done="done"
+              >
+                <template v-slot="{mutate:updateTodo, loading:loadingTodo, error:errorUpdate}">
+                  <input type="text" v-model="updateTitle" />
+                  <button @click="updateTodo">
+                    <span v-if="loadingTodo">Loading</span>
+                    <span v-else-if="errorUpdate">Loading</span>
+                    <span v-else>Submit</span>
+                  </button>
                 </template>
               </ApolloMutation>
             </div>
@@ -50,8 +71,16 @@
 export default {
   name: "ApolloComponent",
   data: () => ({
-    title: ""
-  })
+    title: "",
+    updateTitle: "",
+    isEdit: ""
+  }),
+  methods: {
+    done() {
+      this.updateTitle = "";
+      this.isEdit = false;
+    }
+  }
 };
 </script>
 
