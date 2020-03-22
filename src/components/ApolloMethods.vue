@@ -1,12 +1,7 @@
 <template>
   <div>
     <form @submit.prevent="addTodo">
-      <input
-        type="text"
-        v-model="title"
-        placeholder="Type here..."
-        style="width:50%; margin: auto; height: 40px; font-size: 30px; margin-bottom: 20px"
-      />
+      <input type="text" v-model="title" placeholder="Type here..." class="inputStyle" />
       <button type="submit">Submit</button>
     </form>
 
@@ -15,6 +10,7 @@
     <div class="grid">
       <div class="box" :key="todo.id" v-for="todo in todos">
         <h3>{{ todo.title }}</h3>
+        <button @click="deleteTodo(todo.id)">Delete</button>
       </div>
     </div>
   </div>
@@ -23,6 +19,7 @@
 <script>
 import GetTodos from "../graphql/GetTodos";
 import AddTodo from "../graphql/AddTodo";
+import DeleteTodo from "../graphql/DeleteTodo";
 
 export default {
   name: "ApolloMethods",
@@ -40,6 +37,16 @@ export default {
       this.$apollo.mutate({
         mutation: AddTodo,
         variables: { title: this.title }
+      });
+    },
+
+    deleteTodo(id) {
+      console.log(this.$apollo);
+      this.$apollo.mutate({
+        mutation: DeleteTodo,
+        variables: {
+          id
+        }
       });
     }
   }
@@ -68,5 +75,13 @@ export default {
 
 .green {
   background: lime;
+}
+
+.inputStyle {
+  width: 50%;
+  margin: auto;
+  height: 40px;
+  font-size: 30px;
+  margin-bottom: 20px;
 }
 </style>

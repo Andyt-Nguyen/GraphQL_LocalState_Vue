@@ -9,12 +9,7 @@
       <template v-slot="{mutate, loading, error}">
         <div v-if="error">There was an error</div>
         <form v-if="!loading" @submit.prevent="mutate">
-          <input
-            type="text"
-            v-model="title"
-            placeholder="Type here..."
-            style="width:50%; margin: auto; height: 40px; font-size: 30px; margin-bottom: 20px"
-          />
+          <input type="text" class="inputStyle" v-model="title" placeholder="Type here..." />
 
           <button type="submit">Submit</button>
         </form>
@@ -29,6 +24,20 @@
           <div class="grid">
             <div class="box" :key="todo.id" v-for="todo in data.todos">
               <h3>{{ todo.title }}</h3>
+              <ApolloMutation
+                :mutation="require('../graphql/DeleteTodo.js').default"
+                :variables="{
+                  id: todo.id
+                }"
+              >
+                <template v-slot="{mutate:deleteTodo, loading:loadingDel, error:errorDel}">
+                  <button @click="deleteTodo">
+                    <span v-if="loadingDel">Loading</span>
+                    <span v-else-if="errorDel">Loading</span>
+                    <span v-else>Delete</span>
+                  </button>
+                </template>
+              </ApolloMutation>
             </div>
           </div>
         </div>
@@ -68,5 +77,13 @@ export default {
 
 .green {
   background: lime;
+}
+
+.inputStyle {
+  width: 50%;
+  margin: auto;
+  height: 40px;
+  font-size: 30px;
+  margin-bottom: 20px;
 }
 </style>

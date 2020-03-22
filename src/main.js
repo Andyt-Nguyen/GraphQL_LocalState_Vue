@@ -26,6 +26,16 @@ const localState = {
 							todos: [...todos, todo]
 						}
 					});
+				},
+
+				deleteTodo(_, { id }, { cache }) {
+					const { todos } = cache.readQuery({ query: GetTodos });
+					const filteredTodos = todos.filter(({ id: todoId }) => todoId !== id);
+					cache.writeData({
+						data: {
+							todos: filteredTodos
+						}
+					});
 				}
 			}
 		}
