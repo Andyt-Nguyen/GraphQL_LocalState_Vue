@@ -16,29 +16,14 @@ $ yarn
 
 ```javascript
 // main.js
-import Vue from 'vue';
-import App from './App.vue';
-import router from './router';
-import { createProvider } from './vue-apollo';
-import RandomId from 'random-id';
-import GetTodos from './graphql/GetTodos';
-Vue.config.productionTip = false;
-
 const localState = {
 	clientState: {
 		defaults: {
-			todos: [] // Set up out local state properties that will passing around to other components
+			todos: []
 		},
 		resolvers: {
 			Mutation: {
-				// Mutations for our local state
-
-				addTodo(
-					_,
-					{ title /* incoming data */ },
-					{ cache /* access to the cache */ }
-				) {
-					// Read the query and access all of the data in "todos"
+				addTodo(_, { title }, { cache }) {
 					const { todos } = cache.readQuery({ query: GetTodos });
 					const todo = {
 						id: RandomId(10),
@@ -48,7 +33,7 @@ const localState = {
 					};
 					cache.writeData({
 						data: {
-							todos: [...todos, todo] // Over write the data in todos with the new data
+							todos: [...todos, todo]
 						}
 					});
 				},
@@ -59,6 +44,20 @@ const localState = {
 					cache.writeData({
 						data: {
 							todos: filteredTodos
+						}
+					});
+				},
+
+				updateTodo(_, todoUpdate, { cache }) {
+					const { todos } = cache.readQuery({ query: GetTodos });
+					const updatedTodos = todos.map((todo) =>
+						todo.id === todoUpdate.id
+							? { ...todoUpdate, __typename: 'Todo' }
+							: todo
+					);
+					cache.writeData({
+						data: {
+							todos: updatedTodos
 						}
 					});
 				}
